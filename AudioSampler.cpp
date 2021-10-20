@@ -8,12 +8,6 @@
 
 void AudioSampler::processData(int16_t *i2sData, size_t bytesRead) {
   for (int i = 0; i < bytesRead / 2; i++) {
-    //增益控制,噪音消除
-    //    if (i > 5 && abs(i2sData[i - 4]) < 16 && abs(i2sData[i - 3]) < 16 && abs(i2sData[i - 2]) < 16 && abs(i2sData[i - 1]) < 16 && abs(i2sData[i]) < 16) {
-    //      addSingleData(i2sData[i] = 0);
-    //    } else {
-    //      addSingleData(i2sData[i]);
-    //    }
     addSingleData(i2sData[i]);
   }
 }
@@ -21,6 +15,8 @@ void AudioSampler::processData(int16_t *i2sData, size_t bytesRead) {
 void AudioSampler::addSingleData(int16_t singleData) {
   this->currentAudioBuffer[this->bufferPointer++] = singleData;
   if (this->bufferPointer == this->transmitPackageSize) {
+    //过滤器处理
+
     //如果采样缓冲池满了就交换
     std::swap(this->currentAudioBuffer, this->transmitAudioBuffer);
     this->bufferPointer = 0;
